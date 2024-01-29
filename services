@@ -1,0 +1,29 @@
+services:
+    postgres: 
+        image: postgres:13
+        environment:
+            POSTGRES_USER: postgrey
+            POSTGRES_PASSWORD: postgrey
+            POSTGRES_DB: postgrey
+        
+        volumes:
+        - postgres-db-volume:/bar/lib/postgresql/data
+
+        healthcheck:
+            test: ["CMD",  "pf_isready", "-U", "postgrey"]
+            interval: 5s
+            retries:5
+        restart: always
+
+# First configuration: Database
+docker run -it postgres:13 \
+    -e POSTGRES_USER = "root" \
+    -e POSTGRES_PASSWORD = "root" \
+    -e POSTGRES_DB = "nyc_taksi" \
+    # Second configuration: Volume,
+    -v /Users/alaradirik/Desktop/mw/Docker/nyc_taksi_postgres_data: /bar/lib/postgresql/data
+    # Map a port on the host machine
+    -p 5433:5432
+
+
+

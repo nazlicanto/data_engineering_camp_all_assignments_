@@ -1,0 +1,78 @@
+services:
+    postgres: 
+        image: postgres:13
+        environment:
+            POSTGRES_USER: postgrey
+            POSTGRES_PASSWORD: postgrey
+            POSTGRES_DB: postgrey
+        
+        volumes:
+        - postgres-db-volume:/var/lib/postgresql/data
+
+        healthcheck:
+            test: ["CMD",  "pf_isready", "-U", "postgrey"]
+            interval: 5s
+            retries:5
+        restart: always
+
+# First configuration: Database environment varriables
+docker run -it \
+    -e POSTGRES_USER="root" \
+    -e POSTGRES_PASSWORD="root" \
+    -e POSTGRES_DB="nyc_taksi" \
+    # Second configuration: Volume,
+    -v /Users/alaradirik/Desktop/mw/Docker/nyc_taksi_postgres_data: /var/lib/postgresql/data
+    # Map a port on the host machine
+    -p 5433:5432
+    postgres:13 
+
+
+docker run -it \
+    -e POSTGRES_USER = "root" \
+    -e POSTGRES_PASSWORD = "root" \
+    -e POSTGRES_DB = "nyc_taksi" \
+    -v /Users/alaradirik/Desktop/mw/Docker/nyc_taksi_postgres_data: /var/lib/postgresql/data
+    -p 5433:5432
+    postgres:13 
+
+
+docker run -it \
+    -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" \
+    -e PGADMIN_DEFAULT_PASSWORD="root" \
+    -p 8081:80 \
+    dpage/pgadmin4
+
+
+# w/ Network Postgres & PgAdmin
+
+docker network create pg-network
+docker run -it \
+    -e POSTGRES_USER="root" \
+    -e POSTGRES_PASSWORD="root" \
+    -e POSTGRES_DB="nyc_taksi" \
+    -v /Users/alaradirik/Desktop/mw/Docker/nyc_taksi_postgres_data:/var/lib/postgresql/data \
+    -p 5433:5432 \
+    --network=pg-network \
+    --name pg-database \
+    postgres:13 
+
+docker run -it \
+    -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" \
+    -e PGADMIN_DEFAULT_PASSWORD="root" \
+    -p 8081:80 \
+    --network=pg-network \
+    --name pgadmin \
+    dpage/pgadmin4
+
+URL_ = "https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz"
+
+docker run \
+    --name mycontainer \
+    -e USER=root \
+    -e PASSWORD=root \
+    -e HOST=localhost \
+    -e PORT=5433 \
+    -e DB=nyc_taksi \
+    -e TABLE_NAME=taxi \
+    -e URL="https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz" \
+    ingestimage

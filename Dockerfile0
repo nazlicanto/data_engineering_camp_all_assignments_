@@ -1,0 +1,11 @@
+FROM python:3.9
+
+RUN pip install pandas
+
+# location of the image copied
+WORKDIR /Users/alaradirik/Desktop/mw/Docker
+
+#  first: source name second: destination name  
+COPY pipeline.py pipeline.py 
+
+ENTRYPOINT ["python", "pipeline.py"]
